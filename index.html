@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>数あてゲーム</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #eef7ff;
+      padding-top: 40px;
+    }
+
+    #gameBox {
+      background: white;
+      padding: 25px;
+      width: 90%;
+      max-width: 360px;
+      margin: auto;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    }
+
+    input {
+      padding: 12px;
+      width: 80%;
+      max-width: 200px;
+      margin-top: 10px;
+      font-size: 16px;
+  }
+
+    button {
+      padding: 12px 20px;
+      margin-top: 10px;
+      border: none;
+      background: #4caf50;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+  }
+
+    @media (max-width: 500px) {
+    #hintArrow {
+      font-size: 18px;
+    }
+    #lineGraph span {
+      font-size: 10px;
+    }
+  }
+
+  #lineGraph {
+  position: relative;
+  height: 50px;
+  margin-top: 20px;
+  border-bottom: 2px solid #888;
+  }
+
+  #lineGraph span {
+    position: absolute;
+    top: 15px;
+    font-size: 12px;
+    transform: translateX(-50%);
+  }
+
+  #pin {
+    width: 8%;
+    max-width: 30px;
+    transform: translateX(-50%);
+    position: absolute;
+    top: 25px;
+    display: none;
+    pointer-events: none;
+  }
+  </style>
+</head>
+<body>
+  <h1>数あてゲーム</h1>
+  <button id="start">ゲームスタート</button>
+  <div id="game" style="display:none;">
+    <div id="gameBox">
+      <p>1〜100の数字を当ててください</p>
+      <label for="inputNumber">数字を入力してください（1〜100）:</label>
+      <input id="inputNumber" type="number" placeholder="数字を入力">
+      <button id="submit">送信</button>
+      <div id="lineGraph">
+     <span style="left:0%;">1</span>
+     <span style="left:25%;">25</span>
+     <span style="left:50%;">50</span>
+     <span style="left:75%;">75</span>
+     <span style="left:100%;">100</span>
+     <img id="pin" src="images/pin.png" alt="入力した数字の位置を示すピン">
+      </div>
+      <p id="hintArrow"></p>
+      <p id="message"></p>
+      <p id="triesLeft"></p>
+      <p id="info"></p>
+    </div>
+  </div>
+  <script>
+  const startBtn = document.getElementById("start");
+  const submitBtn = document.getElementById("submit");
+  const gameDiv = document.getElementById("game");
+  const inputNumber = document.getElementById("inputNumber");
+  const message = document.getElementById("message");
+  const info = document.getElementById("info");
+  const triesLeft = document.getElementById("triesLeft");
+  const hintArrow = document.getElementById("hintArrow");
+  const pin = document.getElementById("pin");
+  pin.onerror = () => { pin.style.display = 'none'; };
+  const lineGraph = document.getElementById("lineGraph");
+  const MAX_TRIES = 10;
+
+  let answer;
+  let tries;
+  let invalidInputs;
+  let isGameRunning = false;
+
+  inputNumber.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") submitBtn.click();
+  });
+
+  startBtn.addEventListener("click", () => {
+  if (!isGameRunning) {
+    isGameRunning = true;
+    startBtn.textContent = "リセット";
+    startGame();
+    gameDiv.style.display = "block";
+    } else {
+    resetGame();
+    startGame();
+    }
+  });
+
+  function startGame() {
+    answer = Math.floor(Math.random() * 100) + 1;
+    tries = 0;
+    invalidInputs = 0;
+    message.textContent = "";
+    info.textContent = "";
+    triesLeft.textContent = "残り回数：10 回";
+    hintArrow.textContent = "";
+    pin.style.display = "none";
+    pin.style.left = "-50px";
+    submitBtn.disabled = false;
+    inputNumber.value = "";
+    inputNumber.focus();
+  }
+  
+  function resetGame() {
+  isGameRunning = false;
+  startBtn.textContent = "ゲームスタート";
+  submitBtn.disabled = true;
+  message.textContent = "";
+  info.textContent = "";
+  triesLeft.textContent = "";
+  hintArrow.textContent = "";
+  pin.style.display = "none";
+  }
+
+  function getValidNumber() {
+    const num = Number(inputNumber.value.trim());
+    if (!Number.isInteger(num) || num < 1 || num > 100) {
+    message.textContent = "1〜100の数値を入力してください";
+    message.style.color = "red";
+    inputNumber.value = "";
+    inputNumber.focus();
+    return null;
+    }
+    return num;
+  }
+
+  function setPinPosition(num) {
+    pin.style.display = "block";
+    const graphWidth = lineGraph.clientWidth;
+    const percent = (num - 1) / 99;
+    const posX = percent * graphWidth;
+    pin.style.left = `${posX}px`;
+  }
+
+    submitBtn.addEventListener("click", () => {
+  const guess = getValidNumber();
+  if (guess === null) return;
+
+  setPinPosition(guess);
+
+  tries++;
+  if (guess === answer) {
+    message.textContent = `正解！答えは ${answer}です!`;
+    info.textContent = `あなたは ${tries} 回で正解しました！`;
+    hintArrow.textContent = "おめでとうございます";
+    hintArrow.style.color = "green";
+    triesLeft.textContent = "";
+    submitBtn.disabled = true;
+    isGameRunning = false;
+    startBtn.textContent = "ゲームスタート";
+    inputNumber.value = "";
+    return;
+  }
+
+  if (guess > answer) {
+    hintArrow.textContent = `← 答えは ${guess} より小さい`;
+    hintArrow.style.color = "blue";
+  } else {
+    hintArrow.textContent = `→ 答えは ${guess} より大きい`;
+    hintArrow.style.color = "orange";
+  }
+
+  message.textContent = `（試行 ${tries}/10）`;
+  const remaining = MAX_TRIES - tries;
+  triesLeft.textContent = `残り回数：${remaining} 回`;
+  triesLeft.style.color = remaining <= 3 ? "red" : "black";
+
+  if (tries >= 10) {
+    info.textContent = `残念!10回以内に正解できませんでした。答えは ${answer} です`;
+    submitBtn.disabled = true;
+    isGameRunning = false;
+    startBtn.textContent = "ゲームスタート";
+  }
+
+  inputNumber.value = "";
+  inputNumber.focus();
+});
+</script>
+</body>
+</html>
