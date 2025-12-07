@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <title>数あてゲーム</title>
   <style>
@@ -51,10 +51,10 @@
   }
 
   #lineGraph {
-  position: relative;
-  height: 50px;
-  margin-top: 20px;
-  border-bottom: 2px solid #888;
+    position: relative;
+    height: 50px;
+    margin-top: 20px;
+    border-bottom: 2px solid #888;
   }
 
   #lineGraph span {
@@ -77,13 +77,13 @@
 </head>
 <body>
   <h1>数あてゲーム</h1>
-  <button id="start">ゲームスタート</button>
+  <button type="button" id="start">ゲームスタート</button>
   <div id="game" style="display:none;">
     <div id="gameBox">
       <p>1〜100の数字を当ててください</p>
       <label for="inputNumber">数字を入力してください（1〜100）:</label>
       <input id="inputNumber" type="number" placeholder="数字を入力">
-      <button id="submit">送信</button>
+      <button type="button" id="submit">送信</button>
       <div id="lineGraph">
      <span style="left:0%;">1</span>
      <span style="left:25%;">25</span>
@@ -123,14 +123,15 @@
 
   startBtn.addEventListener("click", () => {
   if (!isGameRunning) {
+    gameDiv.style.display = "block";
+    startGame();
     isGameRunning = true;
     startBtn.textContent = "リセット";
-    startGame();
-    gameDiv.style.display = "block";
-    } else {
+  } else {
     resetGame();
+    gameDiv.style.display = "block";
     startGame();
-    }
+  }
   });
 
   function startGame() {
