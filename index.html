@@ -122,22 +122,22 @@
     if (e.key === "Enter") submitBtn.click();
   });
 
-  startBtn.addEventListener("click", () => {
+  startBtn.addEventListener("pointerdown", () => {
   if (!isGameRunning) {
     gameDiv.style.display = "block";
     startGame();
     isGameRunning = true;
     startBtn.textContent = "リセット";
-   } else {
+  } else {
     if (!hasGuessed) {
       alert("まだ何も入力していません！");
       return;
     }
 
-   resetGame();
-   gameDiv.style.display = "block";
-   startGame();
-   }
+    resetGame();
+    gameDiv.style.display = "block";
+    startGame();
+  }
   });
 
   function startGame() {
@@ -147,22 +147,7 @@
     message.textContent = "";
     info.textContent = "";
     triesLeft.textContent = "残り回数：10 回";
-    hintArrow.textContent = "";
-    pin.style.display = "none";
-    pin.style.left = "-50px";
-    submitBtn.disabled = false;
-    inputNumber.value = "";
-    inputNumber.focus();
-  }
-
-  function startGame() {
-    answer = Math.floor(Math.random() * 100) + 1;
-    tries = 0;
-    invalidInputs = 0;
-    message.textContent = "";
-    info.textContent = "";
-    triesLeft.textContent = "残り回数：10 回";
-    triesLeft.style.color = "black"; // ← ここで必ず黒に戻す
+    triesLeft.style.color = "black";
     hintArrow.textContent = "";
     pin.style.display = "none";
     pin.style.left = "-50px";
