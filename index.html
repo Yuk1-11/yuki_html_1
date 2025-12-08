@@ -116,6 +116,7 @@
   let tries;
   let invalidInputs;
   let isGameRunning = false;
+  let hasGuessed = false;
 
   inputNumber.addEventListener("keydown", (e) => {
     if (e.key === "Enter") submitBtn.click();
@@ -127,11 +128,16 @@
     startGame();
     isGameRunning = true;
     startBtn.textContent = "リセット";
-  } else {
-    resetGame();
-    gameDiv.style.display = "block";
-    startGame();
-  }
+   } else {
+    if (!hasGuessed) {
+      alert("まだ何も入力していません！");
+      return;
+    }
+
+   resetGame();
+   gameDiv.style.display = "block";
+   startGame();
+   }
   });
 
   function startGame() {
@@ -148,17 +154,19 @@
     inputNumber.value = "";
     inputNumber.focus();
   }
-  
+
   function resetGame() {
   isGameRunning = false;
+  hasGuessed = false;
   startBtn.textContent = "ゲームスタート";
   submitBtn.disabled = true;
   message.textContent = "";
   info.textContent = "";
   triesLeft.textContent = "";
+  triesLeft.style.color = "black";
   hintArrow.textContent = "";
   pin.style.display = "none";
-  }
+}
 
   function getValidNumber() {
     const num = Number(inputNumber.value.trim());
@@ -183,6 +191,7 @@
     submitBtn.addEventListener("click", () => {
   const guess = getValidNumber();
   if (guess === null) return;
+  hasGuessed = true;
 
   setPinPosition(guess);
 
