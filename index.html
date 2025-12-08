@@ -155,18 +155,21 @@
     inputNumber.focus();
   }
 
-  function resetGame() {
-  isGameRunning = false;
-  hasGuessed = false;
-  startBtn.textContent = "ゲームスタート";
-  submitBtn.disabled = true;
-  message.textContent = "";
-  info.textContent = "";
-  triesLeft.textContent = "";
-  triesLeft.style.color = "black";
-  hintArrow.textContent = "";
-  pin.style.display = "none";
-}
+  function startGame() {
+    answer = Math.floor(Math.random() * 100) + 1;
+    tries = 0;
+    invalidInputs = 0;
+    message.textContent = "";
+    info.textContent = "";
+    triesLeft.textContent = "残り回数：10 回";
+    triesLeft.style.color = "black"; // ← ここで必ず黒に戻す
+    hintArrow.textContent = "";
+    pin.style.display = "none";
+    pin.style.left = "-50px";
+    submitBtn.disabled = false;
+    inputNumber.value = "";
+    inputNumber.focus();
+  }
 
   function getValidNumber() {
     const num = Number(inputNumber.value.trim());
